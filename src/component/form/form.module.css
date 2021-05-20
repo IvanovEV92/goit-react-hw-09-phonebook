@@ -1,0 +1,31 @@
+.form {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	max-width: 380px;
+}
+.form__label {
+	display: flex;
+	flex-direction: column;
+	color: white;
+}
+.form__button {
+	height: 30px;
+	width: 100px;
+	background-color: white;
+	cursor: pointer;
+}
+.form__button:hover {
+	background-color: teal;
+	color: white;
+}
+input {
+	padding: 5px;
+	height: 20px;
+	margin-top: 5px;
+
+	margin-bottom: 10px;
+}
+input[type='text'] {
+	margin-right: 10px;
+}
