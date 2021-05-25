@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { authSelectors } from '../redux/auth';
 
 import { NavLink } from 'react-router-dom';
@@ -17,26 +17,24 @@ const styles = {
 	},
 };
 
-const Navigation = ({ isAuthenticated }) => (
-	<nav>
-		<NavLink to="/" exact style={styles.link} activeStyle={styles.activeLink}>
-			Главная
-		</NavLink>
-
-		{isAuthenticated && (
-			<NavLink
-				to="/contacts"
-				exact
-				style={styles.link}
-				activeStyle={styles.activeLink}
-			>
-				Контакты
+export default function Navigation() {
+	const isAuthenticated = useSelector(authSelectors.getIsAuthenticated);
+	return (
+		<nav>
+			<NavLink to="/" exact style={styles.link} activeStyle={styles.activeLink}>
+				Главная
 			</NavLink>
-		)}
-	</nav>
-);
-const mapStateToProps = state => ({
-	isAuthenticated: authSelectors.getIsAuthenticated(state),
-});
 
-export default connect(mapStateToProps)(Navigation);
+			{isAuthenticated && (
+				<NavLink
+					to="/contacts"
+					exact
+					style={styles.link}
+					activeStyle={styles.activeLink}
+				>
+					Контакты
+				</NavLink>
+			)}
+		</nav>
+	);
+}

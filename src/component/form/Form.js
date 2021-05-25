@@ -1,64 +1,73 @@
-import React, { Component } from 'react';
+import React, { useState, useCallback } from 'react';
 import styles from './form.module.css';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { contactOperations } from '../../redux/contact/';
-class Form extends Component {
-	state = { name: '', number: '' };
 
-	handleChange = ({ target }) => {
-		const { name, value } = target;
+export default function Form() {
+	const dispatch = useDispatch();
+	const [name, setName] = useState('');
+	const [number, setNumber] = useState('');
 
-		this.setState({ [name]: value });
-	};
+	const handleNameChange = useCallback(event => {
+		const { name, value } = event.currentTarget;
+		switch (name) {
+			case 'name':
+				return setName(value);
 
-	handleSubmit = e => {
-		e.preventDefault();
+			case 'number':
+				return setNumber(value);
 
-		this.props.onSubmit(this.state);
-		this.resetForm();
-	};
-	resetForm = () => {
-		this.setState({ name: '', number: '' });
-	};
-	render() {
-		const { name, number } = this.state;
-		return (
-			<form className={styles.form} onSubmit={this.handleSubmit}>
-				<label className={styles.form__label}>
-					Name
-					<input
-						type="text"
-						name="name"
-						value={name}
-						placeholder="Введите имя"
-						// pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-						title="Имя может состоять только из букв, апострофа, тире и пробелов. Например Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan и т. п."
-						required
-						onChange={this.handleChange}
-					/>
-				</label>
-				<label className={styles.form__label}>
-					Number
-					<input
-						type="tel"
-						name="number"
-						value={number}
-						placeholder="Введите номер"
-						// pattern="(\+?( |-|\.)?\d{1,2}( |-|\.)?)?(\(?\d{3}\)?|\d{3})( |-|\.)?(\d{3}( |-|\.)?\d{4})"
-						title="Номер телефона должен состоять из 11-12 цифр и может содержать цифры, пробелы, тире, пузатые скобки и может начинаться с +"
-						required
-						onChange={this.handleChange}
-					/>
-				</label>
-				<button className={styles.form__button} type="submit">
-					Add contact
-				</button>
-			</form>
-		);
+			default:
+				return null;
+		}
+	}, []);
+
+	const handleSubmit = useCallback(
+		event => {
+			event.preventDefault();
+			const newContact = { name, number };
+			dispatch(contactOperations.handleForm(newContact));
+			resetForm();
+		},
+		[dispatch, name, number],
+	);
+
+	function resetForm() {
+		setName('');
+		setNumber('');
 	}
-}
 
-const mapDispatchToProps = dispatch => ({
-	onSubmit: contact => dispatch(contactOperations.handleForm(contact)),
-});
-export default connect(null, mapDispatchToProps)(Form);
+	return (
+		<form className={styles.form} onSubmit={handleSubmit}>
+			<label className={styles.form__label}>
+				Name
+				<input
+					type="text"
+					name="name"
+					value={name}
+					placeholder="Введите имя"
+					// pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
+					title="Имя может состоять только из букв, апострофа, тире и пробелов. Например Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan и т. п."
+					required
+					onChange={handleNameChange}
+				/>
+			</label>
+			<label className={styles.form__label}>
+				Number
+				<input
+					type="tel"
+					name="number"
+					value={number}
+					placeholder="Введите номер"
+					// pattern="(\+?( |-|\.)?\d{1,2}( |-|\.)?)?(\(?\d{3}\)?|\d{3})( |-|\.)?(\d{3}( |-|\.)?\d{4})"
+					title="Номер телефона должен состоять из 11-12 цифр и может содержать цифры, пробелы, тире, пузатые скобки и может начинаться с +"
+					required
+					onChange={handleNameChange}
+				/>
+			</label>
+			<button className={styles.form__button} type="submit">
+				Add contact
+			</button>
+		</form>
+	);
+}
